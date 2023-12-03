@@ -1,8 +1,9 @@
-from function import *
+from dezero import function
+from dezero import variable
 
-class Square(Function) :
-    def forward(self, x: Variable) -> Variable:
-        return x.data ** 2
+class Square(function.Function) :
+    def forward(self, x: variable.Variable) -> variable.Variable:
+        return variable.Variable(x.data ** 2)
 
     def backward(self, gy):
         x = self.input.data
