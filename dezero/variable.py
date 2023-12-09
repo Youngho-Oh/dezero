@@ -1,3 +1,4 @@
+import numpy as np
 
 class Variable :
     def __init__(self, data:float) -> None:
@@ -9,8 +10,14 @@ class Variable :
         self.creator = func
     
     def backward(self) -> None :
-        f = self.creator
-        if f is not None :
-            x = f.input
-            x.grad = f.backward(self.grad)
-            x.backward()
+        if self.grad is None :
+            self.grad = np.ones_like(self.data)
+
+        funcs = [self.creator]
+        while funcs :
+            f = funcs.pop()
+            x, y = f.input, f.output
+            x.grad = f.backward(y.grad)
+            
+            if x.creator is not None :
+                funcs.append(x.creator)

@@ -1,12 +1,16 @@
-from dezero import function
-from dezero import variable
+from dezero.function import Function
+from dezero.variable import Variable
 
-class Square(function.Function) :
-    def forward(self, x: variable.Variable) -> variable.Variable:
-        return variable.Variable(x.data ** 2)
+class Square(Function) :
+    def forward(self, x: Variable) -> Variable:
+        return Variable(x.data ** 2)
 
     def backward(self, gy):
         x = self.input.data
         gx = 2 * x * gy
         return gx
+
+def square(x:Variable) -> Variable :
+    f = Square()
+    return f(x)
     

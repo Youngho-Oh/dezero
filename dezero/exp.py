@@ -1,12 +1,16 @@
-from dezero import function
-from dezero import variable
+from dezero.function import Function
+from dezero.variable import Variable
 import numpy as np
 
-class Exp(function.Function) :
-    def forward(self, x: variable.Variable) -> variable.Variable:
-        return variable.Variable(np.exp(x.data))
+class Exp(Function) :
+    def forward(self, x: Variable) -> Variable:
+        return Variable(np.exp(x.data))
     
     def backward(self, gy):
         x = self.input.data
         gx = np.exp(x) * gy
         return gx
+
+def exp(x:Variable) -> Variable :
+    f = Exp()
+    return f(x)
