@@ -1,5 +1,5 @@
 # import config
-from dezero import Variable
+from dezero import Variable, Square, Exp
 from dezero.square import square
 from dezero.exp import exp
 import numpy as np
@@ -10,6 +10,7 @@ import numpy as np
 # # C = Square()
 
 x = Variable(np.array(0.5))
+y = Variable(1.0)
 # # a = A(x)
 # # b = B(a)
 # # y = C(b)
