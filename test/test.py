@@ -2,8 +2,8 @@ if '__file__' in globals():
     import os, sys
     sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import unittest
-from dezero import Variable
-from dezero.square import square
+from ohzero import Variable
+from ohzero.square import square
 import numpy as np
 
 # test using "python3 -m unittest test.py"

@@ -1,7 +1,7 @@
 # import config
-from dezero import Variable, Square, Exp
-from dezero.square import square
-from dezero.exp import exp
+from ohzero import Variable, Square, Exp
+from ohzero.square import square
+from ohzero.exp import exp
 import numpy as np
 
 

@@ -1,13 +1,14 @@
-from dezero.function import Function
-from dezero.variable import Variable
+from ohzero.function import Function
+from ohzero.variable import Variable
 import numpy as np
 
 class Square(Function) :
-    def forward(self, x: Variable) -> Variable:
-        return (x.data ** 2)
+    def forward(self, x) :
+        return (x ** 2)
 
     def backward(self, gy):
-        x = self.input.data
+        # x = self.input.data
+        x = self.inputs[0].data
         gx = 2 * x * gy
         return gx
 

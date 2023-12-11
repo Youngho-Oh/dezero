@@ -1,5 +1,5 @@
-from dezero.function import Function
-from dezero.variable import Variable
+from ohzero.function import Function
+from ohzero.variable import Variable
 import numpy as np
 
 class Exp(Function) :
