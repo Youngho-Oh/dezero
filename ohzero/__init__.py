@@ -1,3 +1,4 @@
+from ohzero.config import Config
 from ohzero.variable import Variable
 from ohzero.function import Function
 from ohzero.square import Square

@@ -1,4 +1,5 @@
 from ohzero.variable import Variable
+from ohzero.config import Config
 import numpy as np
 import weakref
 
@@ -11,14 +12,16 @@ class Function :
             ys = (ys, )
         outputs = [Variable(self.__as_array(y)) for y in ys]
 
-        self.generation = max([x.generation for x in inputs])
+        if Config.enable_backprop :
+            self.generation = max([x.generation for x in inputs])
 
-        for output in outputs :
-            output.set_creator(self)
+            for output in outputs :
+                output.set_creator(self)
 
-        self.inputs = inputs
-        # self.outputs = outputs
-        self.outputs = [weakref.ref(output) for output in outputs]
+            self.inputs = inputs
+            # self.outputs = outputs
+            self.outputs = [weakref.ref(output) for output in outputs]
+            
         return outputs if len(outputs) > 1 else outputs[0]
     
     # def forward(self, x) :
