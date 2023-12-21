@@ -1,5 +1,4 @@
 from ohzero.function import Function
-from ohzero.variable import Variable
 
 class Add(Function) :
     def forward(self, x0, x1):
