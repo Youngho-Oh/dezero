@@ -1,6 +1,9 @@
-from ohzero.config import Config
 import numpy as np
 import weakref
+import contextlib
+
+class Config :
+    enable_backprop = True
 
 class Variable :
     def __init__(self, data:np.ndarray, name=None) -> None:
@@ -246,13 +249,26 @@ def exp(x:Variable) -> Variable :
 def pow(x, c) :
     return Pow(c)(x)
 
-Variable.__neg__ = neg
-Variable.__add__ = add
-Variable.__radd__ = add
-Variable.__sub__ = sub
-Variable.__rsub__ = rsub
-Variable.__mul__ = mul
-Variable.__rmul__ = mul
-Variable.__truediv__ = div
-Variable.__rtruediv__ = rdiv
-Variable.__pow__ = pow
+def setup_variable() :
+    Variable.__neg__ = neg
+    Variable.__add__ = add
+    Variable.__radd__ = add
+    Variable.__sub__ = sub
+    Variable.__rsub__ = rsub
+    Variable.__mul__ = mul
+    Variable.__rmul__ = mul
+    Variable.__truediv__ = div
+    Variable.__rtruediv__ = rdiv
+    Variable.__pow__ = pow
+
+@contextlib.contextmanager
+def using_config(name, value) :
+    old_value = getattr(Config, name)
+    setattr(Config, name, value)
+    try :
+        yield
+    finally :
+        setattr(Config, name, old_value)
+
+def no_grad() :
+    return using_config('enable_backprop', False)
