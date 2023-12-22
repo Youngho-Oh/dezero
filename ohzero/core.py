@@ -24,11 +24,13 @@ class Variable :
         p = str(self.data).replace('\n', '\n' + ' ' * 9)
         return 'variable(' + p + ')'
     
-    def __mul__(self, other) :
-        return mul(self, other)
+    # def __mul__(self, other) :
+    #     return mul(self, other)
     
-    def __add__(self, other) :
-        return add(self, other)
+    # def __add__(self, other) :
+    #     return add(self, other)
+
+    __array_priority__ = 200
     
     def set_creator(self, func) -> None :
     # def set_creator(self, func) :
@@ -96,6 +98,7 @@ class Variable :
 class Function :
     # def __call__(self, input) :
     def __call__(self, *inputs) -> Variable :
+        inputs = [as_variable(x) for x in inputs]
         xs = [x.data for x in inputs]
         ys = self.forward(*xs)
         if not isinstance(ys, tuple) :
@@ -126,6 +129,13 @@ class Function :
             return np.array(x)
         return x
 
+class Neg(Function) :
+    def forward(self, x):
+        return -x
+    
+    def backward(self, gy):
+        return -gy
+
 class Add(Function) :
     def forward(self, x0, x1):
         y = x0 + x1
@@ -133,6 +143,14 @@ class Add(Function) :
     
     def backward(self, gy):
         return gy, gy
+
+class Sub(Function) :
+    def forward(self, x0, x1):
+        y = x0 - x1
+        return y
+    
+    def backward(self, gy):
+        return gy, -gy
 
 class Mul(Function) :
     def forward(self, x0, x1):
@@ -142,6 +160,17 @@ class Mul(Function) :
     def backward(self, gy):
         x0, x1 = self.inputs[0].data, self.inputs[1].data
         return gy * x1 , gy * x0
+
+class Div(Function) :
+    def forward(self, x0, x1):
+        y = x0 / x1
+        return y
+    
+    def backward(self, gy):
+        x0, x1 = self.inputs[0].data, self.inputs[1].data
+        gx0 = gy / x1
+        gx1 = gy * (-x0 / x1 ** 2)
+        return gx0 , gx1
 
 class Square(Function) :
     def forward(self, x) :
@@ -163,11 +192,46 @@ class Exp(Function) :
         gx = np.exp(x) * gy
         return gx
 
+class Pow(Function) :
+    def __init__(self, c) :
+        self.c = c
+
+    def forward(self, x) :
+        return x ** self.c
+    
+    def backward(self, gy):
+        x = self.inputs[0].data
+        c = self.c
+        gx = c * x ** (c - 1) * gy
+        return gx
+
+def as_variable(obj) :
+    if isinstance(obj, Variable) :
+        return obj
+    elif not isinstance(obj, np.ndarray) :
+        return Variable(np.array(obj))
+    return Variable(obj)
+
+def neg(x) :
+    return Neg()(x)
+
 def add(x0, x1) :
     return Add()(x0, x1)
 
+def sub(x0, x1) :
+    return Sub()(x0, x1)
+
+def rsub(x0, x1) :
+    return Sub()(x1, x0)
+
 def mul(x0, x1) :
     return Mul()(x0, x1)
+
+def div(x0, x1) :
+    return Div()(x0, x1)
+
+def rdiv(x0, x1) :
+    return Div()(x1, x0)
 
 def square(x:Variable) -> Variable :
 # def square(x) :
@@ -178,3 +242,17 @@ def exp(x:Variable) -> Variable :
 # def exp(x) :
     f = Exp()
     return f(x)
+
+def pow(x, c) :
+    return Pow(c)(x)
+
+Variable.__neg__ = neg
+Variable.__add__ = add
+Variable.__radd__ = add
+Variable.__sub__ = sub
+Variable.__rsub__ = rsub
+Variable.__mul__ = mul
+Variable.__rmul__ = mul
+Variable.__truediv__ = div
+Variable.__rtruediv__ = rdiv
+Variable.__pow__ = pow
