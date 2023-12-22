@@ -27,6 +27,9 @@ class Variable :
     def __mul__(self, other) :
         return mul(self, other)
     
+    def __add__(self, other) :
+        return add(self, other)
+    
     def set_creator(self, func) -> None :
     # def set_creator(self, func) :
         self.creator = func

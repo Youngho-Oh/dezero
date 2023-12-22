@@ -8,9 +8,7 @@ b = Variable(np.array(2.0))
 c = Variable(np.array(1.0))
 
 # y = add(mul(a, b), c)
-temp = a * b
-print(temp)
-y = add(temp, c)
+y = a * b + c
 
 y.backward()
 
