@@ -1,0 +1,219 @@
+digraph g {
+4531395536 [label="z", color=orange, style=filled]
+4531395408 [label="Mul", color=lightblue, style=filled, shape=box]
+4531175568 -> 4531395408
+4531395216 -> 4531395408
+4531395408 -> 4531395536
+4531175568 [label="", color=orange, style=filled]
+4531395216 [label="", color=orange, style=filled]
+4531394960 [label="Add", color=lightblue, style=filled, shape=box]
+4531394768 -> 4531394960
+4531395024 -> 4531394960
+4531394960 -> 4531395216
+4531394768 [label="", color=orange, style=filled]
+4531395024 [label="", color=orange, style=filled]
+4531394640 [label="Mul", color=lightblue, style=filled, shape=box]
+4531389904 -> 4531394640
+4531394448 -> 4531394640
+4531394640 -> 4531394768
+4531389904 [label="", color=orange, style=filled]
+4531394448 [label="", color=orange, style=filled]
+4531394320 [label="Add", color=lightblue, style=filled, shape=box]
+4531393360 -> 4531394320
+4531394128 -> 4531394320
+4531394320 -> 4531394448
+4531393360 [label="", color=orange, style=filled]
+4531394128 [label="", color=orange, style=filled]
+4531393872 [label="Mul", color=lightblue, style=filled, shape=box]
+4531393680 -> 4531393872
+4531393936 -> 4531393872
+4531393872 -> 4531394128
+4531393680 [label="", color=orange, style=filled]
+4531393936 [label="", color=orange, style=filled]
+4531393552 [label="Pow", color=lightblue, style=filled, shape=box]
+4517770832 -> 4531393552
+4531393552 -> 4531393680
+4517770832 [label="y", color=orange, style=filled]
+4531393232 [label="Sub", color=lightblue, style=filled, shape=box]
+4531320912 -> 4531393232
+4531393040 -> 4531393232
+4531393232 -> 4531393360
+4531320912 [label="", color=orange, style=filled]
+4531393040 [label="", color=orange, style=filled]
+4531392912 [label="Mul", color=lightblue, style=filled, shape=box]
+4531392720 -> 4531392912
+4517770832 -> 4531392912
+4531392912 -> 4531393040
+4531392720 [label="", color=orange, style=filled]
+4517770832 [label="y", color=orange, style=filled]
+4531392464 [label="Mul", color=lightblue, style=filled, shape=box]
+4400598544 -> 4531392464
+4531392528 -> 4531392464
+4531392464 -> 4531392720
+4400598544 [label="x", color=orange, style=filled]
+4531392528 [label="", color=orange, style=filled]
+4531341968 [label="Add", color=lightblue, style=filled, shape=box]
+4531391888 -> 4531341968
+4531392336 -> 4531341968
+4531341968 -> 4531320912
+4531391888 [label="", color=orange, style=filled]
+4531392336 [label="", color=orange, style=filled]
+4531392080 [label="Mul", color=lightblue, style=filled, shape=box]
+4517770832 -> 4531392080
+4531392144 -> 4531392080
+4531392080 -> 4531392336
+4517770832 [label="y", color=orange, style=filled]
+4531392144 [label="", color=orange, style=filled]
+4531391760 [label="Add", color=lightblue, style=filled, shape=box]
+4531390800 -> 4531391760
+4531391568 -> 4531391760
+4531391760 -> 4531391888
+4531390800 [label="", color=orange, style=filled]
+4531391568 [label="", color=orange, style=filled]
+4531391312 [label="Mul", color=lightblue, style=filled, shape=box]
+4531391120 -> 4531391312
+4531391376 -> 4531391312
+4531391312 -> 4531391568
+4531391120 [label="", color=orange, style=filled]
+4531391376 [label="", color=orange, style=filled]
+4531390992 [label="Pow", color=lightblue, style=filled, shape=box]
+4400598544 -> 4531390992
+4531390992 -> 4531391120
+4400598544 [label="x", color=orange, style=filled]
+4531390544 [label="Sub", color=lightblue, style=filled, shape=box]
+4531390608 -> 4531390544
+4531390352 -> 4531390544
+4531390544 -> 4531390800
+4531390608 [label="", color=orange, style=filled]
+4531390352 [label="", color=orange, style=filled]
+4531390096 [label="Mul", color=lightblue, style=filled, shape=box]
+4400598544 -> 4531390096
+4531390160 -> 4531390096
+4531390096 -> 4531390352
+4400598544 [label="x", color=orange, style=filled]
+4531390160 [label="", color=orange, style=filled]
+4531389776 [label="Pow", color=lightblue, style=filled, shape=box]
+4531389584 -> 4531389776
+4531389776 -> 4531389904
+4531389584 [label="", color=orange, style=filled]
+4531389456 [label="Sub", color=lightblue, style=filled, shape=box]
+4531176400 -> 4531389456
+4531389264 -> 4531389456
+4531389456 -> 4531389584
+4531176400 [label="", color=orange, style=filled]
+4531389264 [label="", color=orange, style=filled]
+4531176656 [label="Mul", color=lightblue, style=filled, shape=box]
+4517770832 -> 4531176656
+4531176912 -> 4531176656
+4531176656 -> 4531389264
+4517770832 [label="y", color=orange, style=filled]
+4531176912 [label="", color=orange, style=filled]
+4531175952 [label="Mul", color=lightblue, style=filled, shape=box]
+4400598544 -> 4531175952
+4531175824 -> 4531175952
+4531175952 -> 4531176400
+4400598544 [label="x", color=orange, style=filled]
+4531175824 [label="", color=orange, style=filled]
+4531180944 [label="Add", color=lightblue, style=filled, shape=box]
+4531141904 -> 4531180944
+4531180752 -> 4531180944
+4531180944 -> 4531175568
+4531141904 [label="", color=orange, style=filled]
+4531180752 [label="", color=orange, style=filled]
+4531141776 [label="Mul", color=lightblue, style=filled, shape=box]
+4400603152 -> 4531141776
+4531142544 -> 4531141776
+4531141776 -> 4531141904
+4400603152 [label="", color=orange, style=filled]
+4531142544 [label="", color=orange, style=filled]
+4531142416 [label="Add", color=lightblue, style=filled, shape=box]
+4531141136 -> 4531142416
+4531142224 -> 4531142416
+4531142416 -> 4531142544
+4531141136 [label="", color=orange, style=filled]
+4531142224 [label="", color=orange, style=filled]
+4531141584 [label="Mul", color=lightblue, style=filled, shape=box]
+4531141392 -> 4531141584
+4531141648 -> 4531141584
+4531141584 -> 4531142224
+4531141392 [label="", color=orange, style=filled]
+4531141648 [label="", color=orange, style=filled]
+4531141200 [label="Pow", color=lightblue, style=filled, shape=box]
+4517770832 -> 4531141200
+4531141200 -> 4531141392
+4517770832 [label="y", color=orange, style=filled]
+4531133456 [label="Add", color=lightblue, style=filled, shape=box]
+4531133008 -> 4531133456
+4531133584 -> 4531133456
+4531133456 -> 4531141136
+4531133008 [label="", color=orange, style=filled]
+4531133584 [label="", color=orange, style=filled]
+4531133648 [label="Mul", color=lightblue, style=filled, shape=box]
+4531133200 -> 4531133648
+4517770832 -> 4531133648
+4531133648 -> 4531133584
+4531133200 [label="", color=orange, style=filled]
+4517770832 [label="y", color=orange, style=filled]
+4531133136 [label="Mul", color=lightblue, style=filled, shape=box]
+4400598544 -> 4531133136
+4531133392 -> 4531133136
+4531133136 -> 4531133200
+4400598544 [label="x", color=orange, style=filled]
+4531133392 [label="", color=orange, style=filled]
+4531132880 [label="Sub", color=lightblue, style=filled, shape=box]
+4531132624 -> 4531132880
+4531132816 -> 4531132880
+4531132880 -> 4531133008
+4531132624 [label="", color=orange, style=filled]
+4531132816 [label="", color=orange, style=filled]
+4531132688 [label="Mul", color=lightblue, style=filled, shape=box]
+4517770832 -> 4531132688
+4531132752 -> 4531132688
+4531132688 -> 4531132816
+4517770832 [label="y", color=orange, style=filled]
+4531132752 [label="", color=orange, style=filled]
+4531132560 [label="Add", color=lightblue, style=filled, shape=box]
+4531127120 -> 4531132560
+4531132496 -> 4531132560
+4531132560 -> 4531132624
+4531127120 [label="", color=orange, style=filled]
+4531132496 [label="", color=orange, style=filled]
+4531131728 [label="Mul", color=lightblue, style=filled, shape=box]
+4531131664 -> 4531131728
+4531132432 -> 4531131728
+4531131728 -> 4531132496
+4531131664 [label="", color=orange, style=filled]
+4531132432 [label="", color=orange, style=filled]
+4531126480 [label="Pow", color=lightblue, style=filled, shape=box]
+4400598544 -> 4531126480
+4531126480 -> 4531131664
+4400598544 [label="x", color=orange, style=filled]
+4528263056 [label="Sub", color=lightblue, style=filled, shape=box]
+4522757968 -> 4528263056
+4528266512 -> 4528263056
+4528263056 -> 4531127120
+4522757968 [label="", color=orange, style=filled]
+4528266512 [label="", color=orange, style=filled]
+4400598864 [label="Mul", color=lightblue, style=filled, shape=box]
+4400598544 -> 4400598864
+4518988816 -> 4400598864
+4400598864 -> 4528266512
+4400598544 [label="x", color=orange, style=filled]
+4518988816 [label="", color=orange, style=filled]
+4400607632 [label="Pow", color=lightblue, style=filled, shape=box]
+4400598928 -> 4400607632
+4400607632 -> 4400603152
+4400598928 [label="", color=orange, style=filled]
+4517769680 [label="Add", color=lightblue, style=filled, shape=box]
+4521792080 -> 4517769680
+4400598992 -> 4517769680
+4517769680 -> 4400598928
+4521792080 [label="", color=orange, style=filled]
+4400598992 [label="", color=orange, style=filled]
+4518947024 [label="Add", color=lightblue, style=filled, shape=box]
+4400598544 -> 4518947024
+4517770832 -> 4518947024
+4518947024 -> 4521792080
+4400598544 [label="x", color=orange, style=filled]
+4517770832 [label="y", color=orange, style=filled]
+}
