@@ -238,6 +238,16 @@ class Cos(Function) :
         gx = gy * -sin(x)
         return gx
 
+class Tanh(Function) :
+    def forward(self, x) :
+        y = np.tanh(x)
+        return y
+    
+    def backward(self, gy):
+        y = self.outputs[0]()
+        gx = gy * (1 - y * y)
+        return gx
+
 def as_variable(obj) :
     if isinstance(obj, Variable) :
         return obj
@@ -271,6 +281,9 @@ def sin(x) :
 
 def cos(x) :
     return Cos()(x)
+
+def tanh(x) :
+    return Tanh()(x)
 
 def square(x:Variable) -> Variable :
 # def square(x) :
