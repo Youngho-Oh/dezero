@@ -9,6 +9,8 @@ class Variable :
     def __init__(self, data:np.ndarray, name=None) -> None:
     # def __init__(self, data) :
         if data is not None :
+            if isinstance(data, Variable) :
+                data = data.data
             if not isinstance(data, np.ndarray) :
                 raise TypeError('{} is not supported'.format(type(data)))
 
@@ -40,10 +42,11 @@ class Variable :
         self.creator = func
         self.generation = func.generation + 1
     
-    def backward(self, retain_grad=False) -> None :
+    def backward(self, retain_grad=False, create_graph=False) -> None :
     # def backward(self) :
         if self.grad is None :
-            self.grad = np.ones_like(self.data)
+            # self.grad = np.ones_like(self.data)
+            self.grad = Variable(np.ones_like(self.data))
 
         # funcs = [self.creator]
         funcs = []
@@ -61,23 +64,25 @@ class Variable :
             f = funcs.pop()
             # gys = [output.grad for output in f.outputs]
             gys = [output().grad for output in f.outputs]
-            gxs = f.backward(*gys)
-            if not isinstance(gxs, tuple) :
-                gxs = (gxs, )
             
-            for x, gx in zip(f.inputs, gxs) :
-                if x.grad is None :
-                    x.grad = gx
-                else :
-                    x.grad = x.grad + gx
+            with using_config('enable_backprop', create_graph) :
+                gxs = f.backward(*gys)
+                if not isinstance(gxs, tuple) :
+                    gxs = (gxs, )
+                
+                for x, gx in zip(f.inputs, gxs) :
+                    if x.grad is None :
+                        x.grad = gx
+                    else :
+                        x.grad = x.grad + gx
 
-                if x.creator is not None :
-                    # funcs.append(x.creator)
-                    add_func(x.creator)
-            
-            if not retain_grad :
-                for output in f.outputs :
-                    output().grad = None
+                    if x.creator is not None :
+                        # funcs.append(x.creator)
+                        add_func(x.creator)
+                
+                if not retain_grad :
+                    for output in f.outputs :
+                        output().grad = None
     
     def cleargrad(self) :
         self.grad = None
@@ -161,7 +166,8 @@ class Mul(Function) :
         return y
     
     def backward(self, gy):
-        x0, x1 = self.inputs[0].data, self.inputs[1].data
+        # x0, x1 = self.inputs[0].data, self.inputs[1].data
+        x0, x1 = self.inputs[0], self.inputs[1]
         return gy * x1 , gy * x0
 
 class Div(Function) :
@@ -170,7 +176,8 @@ class Div(Function) :
         return y
     
     def backward(self, gy):
-        x0, x1 = self.inputs[0].data, self.inputs[1].data
+        # x0, x1 = self.inputs[0].data, self.inputs[1].data
+        x0, x1 = self.inputs[0], self.inputs[1]
         gx0 = gy / x1
         gx1 = gy * (-x0 / x1 ** 2)
         return gx0 , gx1
@@ -181,7 +188,8 @@ class Square(Function) :
 
     def backward(self, gy):
         # x = self.input.data
-        x = self.inputs[0].data
+        # x = self.inputs[0].data
+        x = self.inputs[0]
         gx = 2 * x * gy
         return gx
 
@@ -191,7 +199,8 @@ class Exp(Function) :
         return Variable(np.exp(x.data))
     
     def backward(self, gy):
-        x = self.input.data
+        # x = self.input.data
+        x = self.inputs[0]
         gx = np.exp(x) * gy
         return gx
 
@@ -203,9 +212,30 @@ class Pow(Function) :
         return x ** self.c
     
     def backward(self, gy):
-        x = self.inputs[0].data
+        # x = self.inputs[0].data
+        x = self.inputs[0]
         c = self.c
         gx = c * x ** (c - 1) * gy
+        return gx
+
+class Sin(Function) :
+    def forward(self, x) :
+        y = np.sin(x)
+        return y
+    
+    def backward(self, gy) :
+        x, = self.inputs
+        gx = gy * cos(x)
+        return gx
+
+class Cos(Function) :
+    def forward(self, x) :
+        y = np.cos(x)
+        return y
+    
+    def backward(self, gy):
+        x, = self.inputs
+        gx = gy * -sin(x)
         return gx
 
 def as_variable(obj) :
@@ -235,6 +265,12 @@ def div(x0, x1) :
 
 def rdiv(x0, x1) :
     return Div()(x1, x0)
+
+def sin(x) :
+    return Sin()(x)
+
+def cos(x) :
+    return Cos()(x)
 
 def square(x:Variable) -> Variable :
 # def square(x) :
