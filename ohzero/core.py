@@ -92,6 +92,9 @@ class Variable :
             shape = shape[0]
         return reshape(self, shape)
 
+    def transpose(self) :
+        return transpose(self)
+
     @property
     def shape(self) :
         return self.data.shape
@@ -107,6 +110,10 @@ class Variable :
     @property
     def dtype(self) :
         return self.data.dtype
+    
+    @property
+    def T(self) :
+        return transpose(self)
 
 class Function :
     # def __call__(self, input) :
@@ -153,6 +160,22 @@ class Reshape(Function) :
 
     def backward(self, gy):
         return reshape(gy, self.x_shape)
+
+class Transpose(Function) :
+    def __init__(self, axes=None) :
+        self.axes = axes
+
+    def forward(self, x) :
+        y = x.transpose(self.axes)
+        return y
+    
+    def backward(self, gy) :
+        if self.axes is None :
+            return transpose(gy)
+        
+        axes_len = len(self.axes)
+        inv_axes = tuple(np.argsort([ax % axes_len for ax in self.axes]))
+        return transpose(gy, inv_axes)
 
 class Neg(Function) :
     def forward(self, x):
@@ -276,6 +299,9 @@ def reshape(x, shape) :
     if x.shape == shape :
         return as_variable(x)
     return Reshape(shape)(x)
+
+def transpose(x, axes=None) :
+    return Transpose(axes)(x)
 
 def neg(x) :
     return Neg()(x)
