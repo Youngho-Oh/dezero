@@ -87,6 +87,11 @@ class Variable :
     def cleargrad(self) :
         self.grad = None
     
+    def reshape(self, *shape) :
+        if len(shape) == 1 and isinstance(shape[0], (tuple, list)) :
+            shape = shape[0]
+        return reshape(self, shape)
+
     @property
     def shape(self) :
         return self.data.shape
@@ -136,6 +141,18 @@ class Function :
         if np.isscalar(x) :
             return np.array(x)
         return x
+
+class Reshape(Function) :
+    def __init__(self, shape) -> None:
+        self.shape = shape
+    
+    def forward(self, x) :
+        self.x_shape = x.shape
+        y = x.reshape(self.shape)
+        return y
+
+    def backward(self, gy):
+        return reshape(gy, self.x_shape)
 
 class Neg(Function) :
     def forward(self, x):
@@ -255,12 +272,16 @@ def as_variable(obj) :
         return Variable(np.array(obj))
     return Variable(obj)
 
+def reshape(x, shape) :
+    if x.shape == shape :
+        return as_variable(x)
+    return Reshape(shape)(x)
+
 def neg(x) :
     return Neg()(x)
 
 def add(x0, x1) :
     return Add()(x0, x1)
-
 def sub(x0, x1) :
     return Sub()(x0, x1)
 
