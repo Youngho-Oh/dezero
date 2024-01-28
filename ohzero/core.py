@@ -1,6 +1,8 @@
 import numpy as np
 import weakref
 import contextlib
+from ohzero import utils
+from ohzero import cuda
 
 class Config :
     enable_backprop = True
@@ -94,6 +96,9 @@ class Variable :
 
     def transpose(self) :
         return transpose(self)
+    
+    def sum(self, axis=None, keepdims=False) :
+        return sum(self, axis, keepdims)
 
     @property
     def shape(self) :
@@ -184,43 +189,88 @@ class Neg(Function) :
     def backward(self, gy):
         return -gy
 
+def neg(x) :
+    return Neg()(x)
+
 class Add(Function) :
     def forward(self, x0, x1):
+        self.x0_shape, self.x1_shape = x0.shape, x1.shape
         y = x0 + x1
         return y
     
     def backward(self, gy):
-        return gy, gy
+        gx0, gx1 = gy, gy
+        if self.x0_shape != self.x1_shape :
+            gx0 = sum_to(gx0, self.x0_shape)
+            gx1 = sum_to(gx1, self.x1_shape)
+        return gx0, gx1
+
+def add(x0, x1) :
+    return Add()(x0, x1)
 
 class Sub(Function) :
     def forward(self, x0, x1):
+        self.x0_shape, self.x1_shape = x0.shape, x1.shape
         y = x0 - x1
         return y
     
     def backward(self, gy):
-        return gy, -gy
+        gx0, gx1 = gy, -gy
+        if self.x0_shape != self.x1_shape :
+            gx0 = sum_to(gx0, self.x0_shape)
+            gx1 = sum_to(gx1, self.x1_shape)
+        return gx0, gx1
+
+def sub(x0, x1) :
+    return Sub()(x0, x1)
+
+def rsub(x0, x1) :
+    return Sub()(x1, x0)
 
 class Mul(Function) :
     def forward(self, x0, x1):
+        self.x0_shape, self.x1_shape = x0.shape, x1.shape
         y = x0 * x1
         return y
     
     def backward(self, gy):
         # x0, x1 = self.inputs[0].data, self.inputs[1].data
-        x0, x1 = self.inputs[0], self.inputs[1]
-        return gy * x1 , gy * x0
+        # x0, x1 = self.inputs[0], self.inputs[1]
+        # return gy * x1 , gy * x0
+        gx0, gx1 = gy * self.inputs[1], gy * self.inputs[0]
+        if self.x0_shape != self.x1_shape :
+            gx0 = sum_to(gx0, self.x0_shape)
+            gx1 = sum_to(gx1, self.x1_shape)
+        
+        return gx0, gx1
+
+def mul(x0, x1) :
+    return Mul()(x0, x1)
 
 class Div(Function) :
     def forward(self, x0, x1):
+        self.x0_shape, self.x1_shape = x0.shape, x1.shape
         y = x0 / x1
         return y
     
     def backward(self, gy):
         # x0, x1 = self.inputs[0].data, self.inputs[1].data
-        x0, x1 = self.inputs[0], self.inputs[1]
-        gx0 = gy / x1
-        gx1 = gy * (-x0 / x1 ** 2)
-        return gx0 , gx1
+        # x0, x1 = self.inputs[0], self.inputs[1]
+        # gx0 = gy / x1
+        # gx1 = gy * (-x0 / x1 ** 2)
+        # return gx0 , gx1
+        gx0, gx1 = gy / self.inputs[1], gy * (-self.inputs[0] / (self.inputs[1] ** 2))
+        if self.x0_shape != self.x1_shape :
+            gx0 = sum_to(gx0, self.x0_shape)
+            gx1 = sum_to(gx1, self.x1_shape)
+        
+        return gx0, gx1
+    
+def div(x0, x1) :
+    return Div()(x0, x1)
+
+def rdiv(x0, x1) :
+    return Div()(x1, x0)
 
 class Square(Function) :
     def forward(self, x) :
@@ -233,6 +283,11 @@ class Square(Function) :
         gx = 2 * x * gy
         return gx
 
+def square(x:Variable) -> Variable :
+# def square(x) :
+    f = Square()
+    return f(x)
+
 class Exp(Function) :
     def forward(self, x: Variable) -> Variable:
     # def forward(self, x) :
@@ -243,6 +298,11 @@ class Exp(Function) :
         x = self.inputs[0]
         gx = np.exp(x) * gy
         return gx
+
+def exp(x:Variable) -> Variable :
+# def exp(x) :
+    f = Exp()
+    return f(x)
 
 class Pow(Function) :
     def __init__(self, c) :
@@ -258,6 +318,9 @@ class Pow(Function) :
         gx = c * x ** (c - 1) * gy
         return gx
 
+def pow(x, c) :
+    return Pow(c)(x)
+
 class Sin(Function) :
     def forward(self, x) :
         y = np.sin(x)
@@ -267,6 +330,9 @@ class Sin(Function) :
         x, = self.inputs
         gx = gy * cos(x)
         return gx
+
+def sin(x) :
+    return Sin()(x)
 
 class Cos(Function) :
     def forward(self, x) :
@@ -278,6 +344,9 @@ class Cos(Function) :
         gx = gy * -sin(x)
         return gx
 
+def cos(x) :
+    return Cos()(x)
+
 class Tanh(Function) :
     def forward(self, x) :
         y = np.tanh(x)
@@ -287,6 +356,85 @@ class Tanh(Function) :
         y = self.outputs[0]()
         gx = gy * (1 - y * y)
         return gx
+
+def tanh(x) :
+    return Tanh()(x)
+
+class Sum(Function) :
+    def __init__(self, axis, keepdims) -> None:
+        self.axis = axis
+        self.keepdims = keepdims
+        
+    def forward(self, x) :
+        self.x_shape = x.shape
+        # y = x.sum()
+        y = x.sum(axis=self.axis, keepdims=self.keepdims)
+        return y
+    
+    def backward(self, gy):
+        gy = utils.reshape_sum_backward(gy, self.x_shape, self.axis, self.keepdims)
+        gx = broadcast_to(gy, self.x_shape)
+        return gx
+
+# def sum(x) :
+def sum(x, axis=None, keepdims=False) :
+    # return Sum()(x)
+    return Sum(axis, keepdims)(x)
+
+class BroadcastTo(Function):
+    def __init__(self, shape):
+        # print("CALL BroadcastTo")
+        self.shape = shape
+
+    def forward(self, x):
+        self.x_shape = x.shape
+        xp = cuda.get_array_module(x)
+        y = xp.broadcast_to(x, self.shape)
+        return y
+
+    def backward(self, gy):
+        gx = sum_to(gy, self.x_shape)
+        return gx
+
+def broadcast_to(x, shape):
+    if x.shape == shape:
+        return as_variable(x)
+    return BroadcastTo(shape)(x)
+
+class SumTo(Function):
+    def __init__(self, shape):
+        # print("CALL SumTo")
+        self.shape = shape
+
+    def forward(self, x):
+        self.x_shape = x.shape
+        y = utils.sum_to(x, self.shape)
+        return y
+
+    def backward(self, gy):
+        gx = broadcast_to(gy, self.x_shape)
+        return gx
+
+def sum_to(x, shape):
+    if x.shape == shape:
+        return as_variable(x)
+    return SumTo(shape)(x)
+
+class MatMul(Function):
+    def forward(self, x, W) :
+        y = x.dot(W)
+
+        return y
+
+    def backward(self, gy):
+        x, W = self.inputs
+        gx = matmul(gy, W.T)
+        gW = matmul(x.T, gy)
+
+        return gx, gW
+
+def matmul(x, W) :
+    return MatMul()(x, W)
 
 def as_variable(obj) :
     if isinstance(obj, Variable) :
@@ -302,48 +450,6 @@ def reshape(x, shape) :
 
 def transpose(x, axes=None) :
     return Transpose(axes)(x)
-
-def neg(x) :
-    return Neg()(x)
-
-def add(x0, x1) :
-    return Add()(x0, x1)
-def sub(x0, x1) :
-    return Sub()(x0, x1)
-
-def rsub(x0, x1) :
-    return Sub()(x1, x0)
-
-def mul(x0, x1) :
-    return Mul()(x0, x1)
-
-def div(x0, x1) :
-    return Div()(x0, x1)
-
-def rdiv(x0, x1) :
-    return Div()(x1, x0)
-
-def sin(x) :
-    return Sin()(x)
-
-def cos(x) :
-    return Cos()(x)
-
-def tanh(x) :
-    return Tanh()(x)
-
-def square(x:Variable) -> Variable :
-# def square(x) :
-    f = Square()
-    return f(x)
-
-def exp(x:Variable) -> Variable :
-# def exp(x) :
-    f = Exp()
-    return f(x)
-
-def pow(x, c) :
-    return Pow(c)(x)
 
 def setup_variable() :
     Variable.__neg__ = neg
