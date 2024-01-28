@@ -291,18 +291,36 @@ def square(x:Variable) -> Variable :
 class Exp(Function) :
     def forward(self, x: Variable) -> Variable:
     # def forward(self, x) :
-        return Variable(np.exp(x.data))
+        # return Variable(np.exp(x.data))
+        xp = cuda.get_array_module(x)
+        y = xp.exp(x)
+        return y
     
     def backward(self, gy):
         # x = self.input.data
-        x = self.inputs[0]
-        gx = np.exp(x) * gy
+        # x = self.inputs[0]
+        # gx = np.exp(x) * gy
+        # return gx
+        y = self.outputs[0]()  # weakref
+        gx = gy * y
         return gx
 
-def exp(x:Variable) -> Variable :
-# def exp(x) :
-    f = Exp()
-    return f(x)
+def exp(x):
+    return Exp()(x)
+
+class Log(Function):
+    def forward(self, x):
+        xp = cuda.get_array_module(x)
+        y = xp.log(x)
+        return y
+
+    def backward(self, gy):
+        x, = self.inputs
+        gx = gy / x
+        return gx
+
+def log(x):
+    return Log()(x)
 
 class Pow(Function) :
     def __init__(self, c) :
@@ -322,11 +340,12 @@ def pow(x, c) :
     return Pow(c)(x)
 
 class Sin(Function) :
-    def forward(self, x) :
-        y = np.sin(x)
+    def forward(self, x):
+        xp = cuda.get_array_module(x)
+        y = xp.sin(x)
         return y
-    
-    def backward(self, gy) :
+
+    def backward(self, gy):
         x, = self.inputs
         gx = gy * cos(x)
         return gx
@@ -335,10 +354,11 @@ def sin(x) :
     return Sin()(x)
 
 class Cos(Function) :
-    def forward(self, x) :
-        y = np.cos(x)
+    def forward(self, x):
+        xp = cuda.get_array_module(x)
+        y = xp.cos(x)
         return y
-    
+
     def backward(self, gy):
         x, = self.inputs
         gx = gy * -sin(x)
@@ -348,12 +368,13 @@ def cos(x) :
     return Cos()(x)
 
 class Tanh(Function) :
-    def forward(self, x) :
-        y = np.tanh(x)
+    def forward(self, x):
+        xp = cuda.get_array_module(x)
+        y = xp.tanh(x)
         return y
-    
+
     def backward(self, gy):
-        y = self.outputs[0]()
+        y = self.outputs[0]()  # weakref
         gx = gy * (1 - y * y)
         return gx
 
@@ -435,6 +456,86 @@ class MatMul(Function):
 
 def matmul(x, W) :
     return MatMul()(x, W)
+
+class MeanSquredError(Function) :
+    def forward(self, x0, x1) :
+        diff = x0 - x1
+        y = (diff ** 2).sum() / len(diff)
+        return y
+    
+    def backward(self, gy) :
+        x0, x1 = self.inputs
+        diff = x0 - x1
+        gx0 = gy * diff * (2. / len(diff))
+        gx1 = -gx0
+
+        return gx0, gx1
+
+def mean_squred_error(x0, x1) :
+    return MeanSquredError()(x0, x1)
+
+class Linear(Function):
+    def forward(self, x, W, b):
+        y = x.dot(W)
+        if b is not None:
+            y += b
+        return y
+
+    def backward(self, gy):
+        x, W, b = self.inputs
+        gb = None if b.data is None else sum_to(gy, b.shape)
+        gx = matmul(gy, W.T)
+        gW = matmul(x.T, gy)
+        return gx, gW, gb
+
+def linear(x, W, b=None):
+    return Linear()(x, W, b)
+
+def linear_simple(x, W, b=None) :
+    t = matmul(x, W)
+    if b is None :
+        return t
+    
+    y = t + b
+    t.data = None   # Release t.data (ndarray) for memory efficiency
+
+    return y
+
+class Sigmoid(Function):
+    def forward(self, x):
+        xp = cuda.get_array_module(x)
+        # y = 1 / (1 + xp.exp(-x))
+        y = xp.tanh(x * 0.5) * 0.5 + 0.5  # Better implementation
+        return y
+
+    def backward(self, gy):
+        y = self.outputs[0]()
+        gx = gy * y * (1 - y)
+        return gx
+
+def sigmoid(x):
+    return Sigmoid()(x)
+
+def sigmoid_simple(x) :
+    x = as_variable(x)
+    y = 1 / (1 + exp(-x))
+
+    return y
+
+class ReLU(Function):
+    def forward(self, x):
+        xp = cuda.get_array_module(x)
+        y = xp.maximum(x, 0.0)
+        return y
+
+    def backward(self, gy):
+        x, = self.inputs
+        mask = x.data > 0
+        gx = gy * mask
+        return gx
+
+def relu(x):
+    return ReLU()(x)
 
 def as_variable(obj) :
     if isinstance(obj, Variable) :
