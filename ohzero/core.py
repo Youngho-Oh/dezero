@@ -120,6 +120,9 @@ class Variable :
     def T(self) :
         return transpose(self)
 
+class Parameter(Variable) :
+    pass
+
 class Function :
     # def __call__(self, input) :
     def __call__(self, *inputs) -> Variable :
