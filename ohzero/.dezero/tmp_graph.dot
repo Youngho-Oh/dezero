@@ -1,47 +1,23 @@
 digraph g {
-4532865296 [label="", color=orange, style=filled]
-4524046032 [label="MatMul", color=lightblue, style=filled, shape=box]
-4524045776 -> 4524046032
-4533496720 -> 4524046032
-4524046032 -> 4532865296
-4524045776 [label="", color=orange, style=filled]
-4533496720 [label="", color=orange, style=filled]
-4531042128 [label="Transpose", color=lightblue, style=filled, shape=box]
-4469657168 -> 4531042128
-4531042128 -> 4533496720
-4469657168 [label="", color=orange, style=filled]
-4524035920 [label="Neg", color=lightblue, style=filled, shape=box]
-4524035856 -> 4524035920
-4524035920 -> 4524045776
-4524035856 [label="", color=orange, style=filled]
-4534010704 [label="Mul", color=lightblue, style=filled, shape=box]
-4534012368 -> 4534010704
-4524035728 -> 4534010704
-4534010704 -> 4524035856
-4534012368 [label="", color=orange, style=filled]
-4524035728 [label="", color=orange, style=filled]
-4534011472 [label="Mul", color=lightblue, style=filled, shape=box]
-4345856400 -> 4534011472
-4520538256 -> 4534011472
-4534011472 -> 4534012368
-4345856400 [label="", color=orange, style=filled]
-4520538256 [label="", color=orange, style=filled]
-4533195344 [label="Sub", color=lightblue, style=filled, shape=box]
-4534022608 -> 4533195344
-4532800464 -> 4533195344
-4533195344 -> 4520538256
-4534022608 [label="", color=orange, style=filled]
-4532800464 [label="", color=orange, style=filled]
-4533941264 [label="Add", color=lightblue, style=filled, shape=box]
-4474571792 -> 4533941264
-4469593424 -> 4533941264
-4533941264 -> 4532800464
-4474571792 [label="", color=orange, style=filled]
-4469593424 [label="", color=orange, style=filled]
-4474573648 [label="MatMul", color=lightblue, style=filled, shape=box]
-4469733712 -> 4474573648
-4469657168 -> 4474573648
-4474573648 -> 4474571792
-4469733712 [label="", color=orange, style=filled]
-4469657168 [label="", color=orange, style=filled]
+4455585488 [label="(5, 10) float64", color=orange, style=filled]
+4578212240 [label="Linear", color=lightblue, style=filled, shape=box]
+4576275088 -> 4578212240
+4455629648 -> 4578212240
+4455629392 -> 4578212240
+4578212240 -> 4455585488
+4576275088 [label="(5, 100) float64", color=orange, style=filled]
+4455629648 [label="W: (100, 10) float32", color=orange, style=filled]
+4455629392 [label="b: (10,) float32", color=orange, style=filled]
+4586365264 [label="Sigmoid", color=lightblue, style=filled, shape=box]
+4586090704 -> 4586365264
+4586365264 -> 4576275088
+4586090704 [label="(5, 100) float64", color=orange, style=filled]
+4577736720 [label="Linear", color=lightblue, style=filled, shape=box]
+4578089808 -> 4577736720
+4576274512 -> 4577736720
+4578274128 -> 4577736720
+4577736720 -> 4586090704
+4578089808 [label="x: (5, 10) float64", color=orange, style=filled]
+4576274512 [label="W: (10, 100) float32", color=orange, style=filled]
+4578274128 [label="b: (100,) float32", color=orange, style=filled]
 }

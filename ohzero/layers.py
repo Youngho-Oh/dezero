@@ -1,5 +1,5 @@
 from typing import Any
-from ohzero import core
+from ohzero import core as F
 import numpy as np
 
 import weakref
@@ -9,7 +9,7 @@ class Layer :
         self._params = set()
     
     def __setattr__(self, name, value) :
-        if isinstance(value, (core.Parameter, Layer)) :
+        if isinstance(value, (F.Parameter, Layer)) :
             self._params.add(name)
         super().__setattr__(name, value)
     
@@ -44,14 +44,14 @@ class Linear(Layer) :
         self.out_size = out_size
         self.dtype = dtype
 
-        self.W = core.Parameter(None, name='W')
+        self.W = F.Parameter(None, name='W')
         if self.in_size is not None :
             self._init_W()
         
         if nobias :
             self.b = None
         else :
-            self.b = core.Parameter(np.zeros(out_size, dtype=dtype), name='b')
+            self.b = F.Parameter(np.zeros(out_size, dtype=dtype), name='b')
     
     def _init_W(self):
         I, O = self.in_size, self.out_size
@@ -62,5 +62,5 @@ class Linear(Layer) :
             self.in_size = x.shape[1]
             self._init_W()
 
-        y = core.linear(x, self.W, self.b)
+        y = F.linear(x, self.W, self.b)
         return y
