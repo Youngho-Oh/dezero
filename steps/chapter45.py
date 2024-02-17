@@ -7,6 +7,14 @@ from ohzero.core import *
 import ohzero.layers as L
 from ohzero.models import Model
 
+np.random.seed(0)
+x = np.random.rand(100, 1)
+y = np.sin(2 * np.pi * x) + np.random.rand(100, 1)
+
+lr = 0.2
+max_iter = 10000
+hidden_size = 10
+
 class TwoLayerNet(Model) :
     def __init__(self, hidden_size, out_size):
         super().__init__()
@@ -18,6 +26,16 @@ class TwoLayerNet(Model) :
         y = self.l2(y)
         return y
 
-x = Variable(np.random.randn(5, 10), name='x')
-model =  TwoLayerNet(100, 10)
-model.plot(x)
+model =  TwoLayerNet(hidden_size, 1)
+
+for i in range(max_iter) :
+    y_pred = model(x)
+    loss = mean_squred_error(y, y_pred)
+
+    model.cleargrads()
+    loss.backward()
+
+    for p in model.params() :
+        p.data -= lr * p.grad.data
+    if i % 1000 == 0 :
+        print(loss)

@@ -1,23 +1,23 @@
 digraph g {
-4455585488 [label="(5, 10) float64", color=orange, style=filled]
-4578212240 [label="Linear", color=lightblue, style=filled, shape=box]
-4576275088 -> 4578212240
-4455629648 -> 4578212240
-4455629392 -> 4578212240
-4578212240 -> 4455585488
-4576275088 [label="(5, 100) float64", color=orange, style=filled]
-4455629648 [label="W: (100, 10) float32", color=orange, style=filled]
-4455629392 [label="b: (10,) float32", color=orange, style=filled]
-4586365264 [label="Sigmoid", color=lightblue, style=filled, shape=box]
-4586090704 -> 4586365264
-4586365264 -> 4576275088
-4586090704 [label="(5, 100) float64", color=orange, style=filled]
-4577736720 [label="Linear", color=lightblue, style=filled, shape=box]
-4578089808 -> 4577736720
-4576274512 -> 4577736720
-4578274128 -> 4577736720
-4577736720 -> 4586090704
-4578089808 [label="x: (5, 10) float64", color=orange, style=filled]
-4576274512 [label="W: (10, 100) float32", color=orange, style=filled]
-4578274128 [label="b: (100,) float32", color=orange, style=filled]
+4608726576 [label="(5, 10) float64", color=orange, style=filled]
+4608726288 [label="Linear", color=lightblue, style=filled, shape=box]
+4608726384 -> 4608726288
+4608725856 -> 4608726288
+4608725952 -> 4608726288
+4608726288 -> 4608726576
+4608726384 [label="(5, 100) float64", color=orange, style=filled]
+4608725856 [label="W: (100, 10) float32", color=orange, style=filled]
+4608725952 [label="b: (10,) float32", color=orange, style=filled]
+4608726096 [label="Sigmoid", color=lightblue, style=filled, shape=box]
+4608726192 -> 4608726096
+4608726096 -> 4608726384
+4608726192 [label="(5, 100) float64", color=orange, style=filled]
+4608726048 [label="Linear", color=lightblue, style=filled, shape=box]
+4541038352 -> 4608726048
+4541034224 -> 4608726048
+4608725280 -> 4608726048
+4608726048 -> 4608726192
+4541038352 [label="x: (5, 10) float64", color=orange, style=filled]
+4541034224 [label="W: (10, 100) float32", color=orange, style=filled]
+4608725280 [label="b: (100,) float32", color=orange, style=filled]
 }
