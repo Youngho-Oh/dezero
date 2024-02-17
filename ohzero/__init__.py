@@ -6,5 +6,6 @@ from ohzero.core import as_variable
 from ohzero.core import setup_variable
 from ohzero.layers import Layer
 from ohzero.models import Model
+from ohzero.optimizers import SGD, MomentumSGD
 
 setup_variable()

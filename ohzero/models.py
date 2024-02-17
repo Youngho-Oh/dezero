@@ -14,7 +14,7 @@ class MLP(Model) :
         self.layers = []
 
         for i, out_size in enumerate(fc_output_sizes):
-            layer = core.Linear(out_size)
+            layer = layers.Linear(out_size)
             setattr(self, 'l' + str(i), layer)
             self.layers.append(layer)
     
