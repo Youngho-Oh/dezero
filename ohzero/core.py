@@ -120,6 +120,14 @@ class Variable :
     def T(self) :
         return transpose(self)
 
+    def to_cpu(self):
+        if self.data is not None:
+            self.data = cuda.as_numpy(self.data)
+
+    def to_gpu(self):
+        if self.data is not None:
+            self.data = cuda.as_cupy(self.data)
+
 class Parameter(Variable) :
     pass
 
