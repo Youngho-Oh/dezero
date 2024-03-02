@@ -7,6 +7,7 @@ from ohzero.core import setup_variable
 from ohzero.layers import Layer
 from ohzero.models import Model
 from ohzero.optimizers import SGD, MomentumSGD
-from ohzero.datasets import get_spiral
+from ohzero.datasets import Spiral, get_spiral
+from ohzero.dataloaders import DataLoader
 
 setup_variable()
