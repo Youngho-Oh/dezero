@@ -1,6 +1,6 @@
 from ohzero import layers
 from ohzero import utils
-from ohzero import core
+from ohzero.functions import sigmoid
 
 class Model(layers.Layer):
     def plot(self, *inputs, to_file='model.svg'):
@@ -8,7 +8,7 @@ class Model(layers.Layer):
         return utils.plot_dot_graph(y, verbose=True, to_file=to_file)
 
 class MLP(Model) :
-    def __init__(self, fc_output_sizes, activation=core.sigmoid) :
+    def __init__(self, fc_output_sizes, activation=sigmoid) :
         super().__init__()
         self.activation = activation
         self.layers = []

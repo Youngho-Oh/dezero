@@ -7,6 +7,7 @@ from ohzero.core import *
 import ohzero.layers as L
 from ohzero.models import MLP
 from ohzero import optimizers
+from ohzero.functions import softmax_cross_entropy
 
 # def softmax1d(x) :
 #     x = as_variable(x)
